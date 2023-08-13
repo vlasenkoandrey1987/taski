@@ -1,0 +1,34 @@
+python -m manage runserver 0:8000
+python -m manage runserver 0:8000 --insecure
+python -m manage collectstatic
+sudo cp -r /home/andrey/taski/backend/static_backend/ /var/www/taski/
+
+gunicorn --bind 0.0.0.0:8000 backend.wsgi
+
+npm run build
+sudo cp -r /home/andrey/taski/frontend/build/. /var/www/taski/
+
+sudo systemctl
+sudo nano /etc/systemd/system/gunicorn_taski.service
+sudo systemctl start gunicorn_taski # Запустить юнит
+sudo systemctl stop gunicorn_taski # Остановить юнит
+sudo systemctl restart gunicorn_taski # Перезапустить юнит
+sudo systemctl enable gunicorn_taski # Добавить юнит в список автозапуска операционной системы
+sudo systemctl status gunicorn_taski # Убедиться что gunicorn активен
+
+sudo systemctl daemon-reload # Перезапустить все службы
+
+sudo systemctl start nginx
+sudo systemctl reload nginx
+sudo nano /etc/nginx/sites-enabled/default
+sudo nginx -t
+sudo tail -n 10 /var/log/nginx/access.log
+sudo tail -n 10 /var/log/nginx/error.log
+
+sudo ufw allow 'Nginx Full'
+sudo ufw allow OpenSSH
+sudo ufw enable
+sudo ufw disable
+sudo ufw status
+
+sudo certbot --nginx
